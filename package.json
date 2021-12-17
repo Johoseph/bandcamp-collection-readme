@@ -1,0 +1,23 @@
+{
+  "name": "bandcamp-collection-github",
+  "version": "1.0.0",
+  "description": "A bandcamp collection scraper that generates a history panel for your readme 🎸",
+  "main": "index.js",
+  "author": "Joseph Moroney",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "npmlog": "^6.0.0",
+    "scrape-it": "^5.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
