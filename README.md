@@ -10,7 +10,7 @@ Add the below snippet to your GitHub's `README.md` page to retreive the most rec
 [![Bandcamp collection](https://bandcamp-collection-readme.vercel.app/getCollection?username=Johoseph)](https://github.com/Johoseph/bandcamp-collection-readme)
 ```
 
-[![Johoseph's bandcamp collection](https://bandcamp-collection-readme.vercel.app/getCollection?username=Johoseph)](https://github.com/Johoseph/bandcamp-collection-readme)
+[![Johoseph's bandcamp collection](https://bandcamp-collection-readme.vercel.app/getCollection?username=Johoseph)](https://bandcamp-collection-readme.vercel.app/getCollection?username=Johoseph)
 
 ## Customisation
 
