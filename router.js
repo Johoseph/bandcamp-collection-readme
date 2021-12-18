@@ -64,6 +64,8 @@ router.get("/getCollection", async (req, res) => {
     include_wishlist,
     items = 5,
     one_collection_item,
+    hide_profile,
+    theme,
   } = req.query;
 
   let data;
@@ -75,8 +77,11 @@ router.get("/getCollection", async (req, res) => {
   if (isNaN(items))
     return res.status(400).send("Items specified must be a number.");
 
+  // Default options
   include_wishlist = include_wishlist !== "false";
   one_collection_item = one_collection_item !== "false";
+  hide_profile = hide_profile === "false";
+  theme = theme === "dark" ? "dark" : "light";
 
   await Promise.all([
     scrapeIt(`https://bandcamp.com/${username}`, scrapeConfig(true)).then(
@@ -112,5 +117,11 @@ router.get("/getCollection", async (req, res) => {
       return cur;
     }, []);
 
-  return res.render("svg", { data });
+  return res.render("svg", {
+    data,
+    config: {
+      hide_profile,
+      theme,
+    },
+  });
 });
