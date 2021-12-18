@@ -89,9 +89,10 @@ router.get("/getCollection", async (req, res) => {
         !item.isCollection
       )
         return cur;
+
       if (cur.length < parseInt(items, 10)) return [...cur, item];
       return cur;
     }, []);
 
-  return res.status(200).json(collection);
+  return res.render("svg");
 });
