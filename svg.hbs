@@ -1,9 +1,9 @@
 <head>
   <style>
-    {{#if (isDarkMode config.theme)}}
-      :root { --background: #212121; --text-colour: #ffffff; --hr: #464548; }
+    {{#if (isDarkMode theme)}}
+      :root { --background: #212121; --text-colour: #ffffff; --hr: #464548; --logo-colour: #ffffff; }
     {{else}}
-      :root { --background: #ffffff; --text-colour: #505958; --hr: #ddd; }
+      :root { --background: #ffffff; --text-colour: #505958; --hr: #ddd; --logo-colour: #333;}
     {{/if}}
   </style>
   <link rel="stylesheet" href="styles.css" />
@@ -17,11 +17,17 @@
     fill="none"
   >
     <rect class="bg" width="100%" height="100%" rx="5"></rect>
-    {{#unless config.hideProfile}}
-      <g id="profile">
-
-      </g>
-    {{/unless}}
+    <g id="header">
+      <a href="https://bandcamp.com" target="_blank">
+        {{> bandcamp }}
+      </a>
+      <text class="text logo-acc">recently added</text>
+      <a class="link text" href="https://bandcamp.com/{{data.profileName}}" target="_blank">
+        <text class="profile">{{data.profileName}}</text>
+      </a>
+      <rect class="hr" x="10" width="580" y="49" height="1">
+      </rect>
+    </g>
     <g id="history">
       {{#each data.items}}
         <g class="item" style="transform:translate(0, {{offset @index}}px);">

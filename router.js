@@ -64,7 +64,6 @@ router.get("/getCollection", async (req, res) => {
     include_wishlist,
     items = 5,
     one_collection_item,
-    hide_profile,
     theme,
   } = req.query;
 
@@ -80,7 +79,6 @@ router.get("/getCollection", async (req, res) => {
   // Default options
   include_wishlist = include_wishlist !== "false";
   one_collection_item = one_collection_item !== "false";
-  hide_profile = hide_profile === "false";
   theme = theme === "dark" ? "dark" : "light";
 
   await Promise.all([
@@ -119,9 +117,6 @@ router.get("/getCollection", async (req, res) => {
 
   return res.render("svg", {
     data,
-    config: {
-      hide_profile,
-      theme,
-    },
+    theme,
   });
 });

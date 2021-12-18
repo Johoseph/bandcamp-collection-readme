@@ -9,7 +9,7 @@ export const initHandlebars = () => {
   hbs.handlebars.registerHelper("offset", (index) => index * itemHeight);
   hbs.handlebars.registerHelper(
     "getHeight",
-    (items) => items.length * itemHeight
+    (items) => items.length * itemHeight + 50
   );
   hbs.handlebars.registerHelper("truncate", (str) => {
     if (str.length >= 45) return `${str.substr(0, 45)}...`;

@@ -45,6 +45,19 @@ body {
   text-anchor: end;
 }
 
+.profile {
+  font-size: 18px;
+  transform: translate(580px, 16px);
+  text-anchor: end;
+  fill: var(--logo-colour);
+}
+
+.logo-acc {
+  font-size: 16px;
+  transform: translate(160px, 18px);
+  fill: var(--logo-colour);
+}
+
 .icon {
   transform: translate(550px, 17px);
 }
@@ -68,4 +81,12 @@ body {
 
 .hr {
   fill: var(--hr);
+}
+
+#logo {
+  transform: translate(20px, 17px);
+}
+
+#history {
+  transform: translate(0, 50px);
 }
