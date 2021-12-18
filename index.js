@@ -21,6 +21,12 @@ app.use(express.json());
 
 app.use("/", router);
 
+app.all("*", function (req, res) {
+  res
+    .status(301)
+    .redirect("https://github.com/Johoseph/bandcamp-collection-github");
+});
+
 app.listen(port, () => {
   log.info(`Bandcamp collection scraper started at http://localhost:${port}`);
 });

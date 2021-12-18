@@ -3,12 +3,6 @@ import scrapeIt from "scrape-it";
 
 export const router = express.Router();
 
-router.get("/", async (_req, res) => {
-  return res
-    .status(301)
-    .redirect("https://github.com/Johoseph/bandcamp-collection-github");
-});
-
 const scrapeConfig = (isCollection) => ({
   profileName: {
     selector: "[data-bind='text: name']",
