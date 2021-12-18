@@ -19,12 +19,24 @@ const scrapeConfig = (isCollection) => ({
       artist: {
         selector: ".item-link-alt .collection-item-artist",
       },
+      albumLink: {
+        selector: ".item-link:not(.also-link)",
+        attr: "href",
+      },
+      albumArt: {
+        selector: ".collection-item-art",
+        attr: "src",
+      },
       dateAdded: {
         attr: "data-token",
         convert: (val) => val.split(":")[0],
       },
       favFeatTrack: {
         selector: ".fav-track-link",
+      },
+      favFeatTrackLink: {
+        selector: ".fav-track-link",
+        attr: "href",
       },
       isCollection: {
         convert: () => isCollection,
