@@ -109,6 +109,8 @@ router.get("/getCollection", async (req, res) => {
       return cur;
     }, []);
 
+  res.setHeader("Content-type", "image/svg+xml");
+
   return res.render("svg", {
     data,
     theme,

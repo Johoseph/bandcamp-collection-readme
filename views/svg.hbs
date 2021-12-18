@@ -1,72 +1,74 @@
-<head>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="600"
+  height="{{getHeight data.items}}"
+  viewBox="0 0 600 {{getHeight data.items}}"
+  fill="none"
+>
   <style>
     {{#if (isDarkMode theme)}}
-      :root { --background: #212121; --text-colour: #ffffff; --hr: #464548; --logo-colour: #ffffff; }
+      :root { --background: #212121; --text-colour: #ffffff; --hr: #464548;
+      --logo-colour: #ffffff; }
     {{else}}
-      :root { --background: #ffffff; --text-colour: #505958; --hr: #ddd; --logo-colour: #333;}
+      :root { --background: #ffffff; --text-colour: #505958; --hr: #ddd;
+      --logo-colour: #333;}
     {{/if}}
   </style>
-  <link rel="stylesheet" href="/styles.css" />
-</head>
-<body>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="600"
-    height="{{getHeight data.items}}"
-    viewBox="0 0 600 {{getHeight data.items}}"
-    fill="none"
-  >
-    <rect class="bg" width="100%" height="100%" rx="5"></rect>
-    <g id="header">
-      <a href="https://bandcamp.com" target="_blank">
-        {{> bandcamp }}
-      </a>
-      <text class="text logo-acc">recently added</text>
-      <a class="link text" href="https://bandcamp.com/{{data.profileName}}" target="_blank">
-        <text class="profile">{{data.profileName}}</text>
-      </a>
-      <rect class="hr" x="10" width="580" y="49" height="1">
-      </rect>
-    </g>
-    <g id="history">
-      {{#each data.items}}
-        <g class="item" style="transform:translate(0, {{offset @index}}px);">
-          <image
-            class="artwork"
-            href="{{this.albumArt}}"
-            height="40"
-            width="40"
-          />
-          <a class="link text" href="{{this.albumLink}}" target="_blank">
-            <text class="title">{{truncate this.title}}</text>
-            <text class="artist">{{this.artist}}</text>
-          </a>
-          {{#if this.favFeatTrack}}
-            <g class="fav-feat">
-              <text class="fav-feat-title text">
-                {{#if this.isCollection}}favourite{{else}}featured{{/if}}
-                track
-              </text>
-              <a
-                class="link text"
-                href="{{this.favFeatTrackLink}}"
-                target="_blank"
-              >
-                <text class="fav-feat-track">{{this.favFeatTrack}}</text>
-              </a>
-            </g>
-          {{/if}}
-          <g class="icon">
-            {{#if this.isCollection}}
-              {{> heart }}
-            {{else}}
-              {{> bag }}
-            {{/if}}
+  {{> style }}
+  <rect class="bg" width="100%" height="100%" rx="5"></rect>
+  <g id="header">
+    <a href="https://bandcamp.com" target="_blank">
+      {{> bandcamp }}
+    </a>
+    <text class="text logo-acc">recently added</text>
+    <a
+      class="link text"
+      href="https://bandcamp.com/{{data.profileName}}"
+      target="_blank"
+    >
+      <text class="profile">{{data.profileName}}</text>
+    </a>
+    <rect class="hr" x="10" width="580" y="49" height="1">
+    </rect>
+  </g>
+  <g id="history">
+    {{#each data.items}}
+      <g class="item" style="transform:translate(0, {{offset @index}}px);">
+        <image
+          class="artwork"
+          href="{{this.albumArt}}"
+          height="40"
+          width="40"
+        />
+        <a class="link text" href="{{this.albumLink}}" target="_blank">
+          <text class="title">{{truncate this.title}}</text>
+          <text class="artist">{{this.artist}}</text>
+        </a>
+        {{#if this.favFeatTrack}}
+          <g class="fav-feat">
+            <text class="fav-feat-title text">
+              {{#if this.isCollection}}favourite{{else}}featured{{/if}}
+              track
+            </text>
+            <a
+              class="link text"
+              href="{{this.favFeatTrackLink}}"
+              target="_blank"
+            >
+              <text class="fav-feat-track">{{this.favFeatTrack}}</text>
+            </a>
           </g>
-          <rect class="hr" x="10" width="580" y="60" height="1">
-          </rect>
+        {{/if}}
+        <g class="icon">
+          {{#if this.isCollection}}
+            {{> heart }}
+          {{else}}
+            {{> bag }}
+          {{/if}}
         </g>
-      {{/each}}
-    </g>
-  </svg>
-</body>
+        <rect class="hr" x="10" width="580" y="60" height="1">
+        </rect>
+      </g>
+    {{/each}}
+  </g>
+</svg>
