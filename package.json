@@ -1,5 +1,5 @@
 {
-  "name": "bandcamp-collection-github",
+  "name": "bandcamp-collection-readme",
   "version": "1.0.0",
   "description": "A bandcamp collection scraper that generates a history panel for your readme 🎸",
   "main": "index.js",

@@ -1,4 +1,4 @@
-# Bandcamp Collection Github
+# Bandcamp Collection Readme
 
 Share the items you have recently added to your [bandcamp](https://bandcamp.com/) collection on your GitHub readme. Inspired by similar projects, including [GitHub Readme Stats](https://github.com/anuraghazra/github-readme-stats) and [Spotify Recently Played README](https://github.com/JeffreyCA/spotify-recently-played-readme).
 
