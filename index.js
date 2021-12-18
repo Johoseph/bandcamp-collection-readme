@@ -14,7 +14,7 @@ initHandlebars();
 app.set("view engine", "hbs");
 app.set("views", path.resolve() + "/views");
 
-app.use(express.static("public"));
+app.use(express.static(path.resolve() + "/public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.json());
