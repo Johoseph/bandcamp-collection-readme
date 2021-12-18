@@ -10,6 +10,19 @@ router.get("/", async (_req, res) => {
 });
 
 const scrapeConfig = (isCollection) => ({
+  profileName: {
+    selector: "[data-bind='text: name']",
+  },
+  profilePicture: {
+    selector: ".popupImage > img",
+    attr: "src",
+  },
+  collectionCount: {
+    selector: "[data-tab='collection'] .count",
+  },
+  wishlistCount: {
+    selector: "[data-tab='wishlist'] .count",
+  },
   items: {
     listItem: ".collection-item-container",
     data: {
@@ -52,7 +65,9 @@ router.get("/getCollection", async (req, res) => {
     items = 5,
     one_collection_item,
   } = req.query;
-  let collection = [];
+
+  let data;
+  let itemsArr = [];
 
   if (!username)
     return res.status(400).send("No Bandcamp user specified in request.");
@@ -65,19 +80,22 @@ router.get("/getCollection", async (req, res) => {
 
   await Promise.all([
     scrapeIt(`https://bandcamp.com/${username}`, scrapeConfig(true)).then(
-      (data) => (collection = [...collection, ...data.data.items])
+      (scrape) => {
+        data = scrape.data;
+        itemsArr = [...itemsArr, ...scrape.data.items];
+      }
     ),
     ...(include_wishlist
       ? [
           scrapeIt(
             `https://bandcamp.com/${username}/wishlist`,
             scrapeConfig(false)
-          ).then((data) => (collection = [...collection, ...data.data.items])),
+          ).then((scrape) => (itemsArr = [...itemsArr, ...scrape.data.items])),
         ]
       : []),
   ]);
 
-  collection = collection
+  data.items = itemsArr
     .sort((a, b) =>
       parseInt(a.dateAdded, 10) < parseInt(b.dateAdded, 10) ? 1 : -1
     )
@@ -94,5 +112,5 @@ router.get("/getCollection", async (req, res) => {
       return cur;
     }, []);
 
-  return res.render("svg");
+  return res.render("svg", { data });
 });
