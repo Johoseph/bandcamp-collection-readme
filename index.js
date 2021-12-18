@@ -4,12 +4,12 @@ import log from "npmlog";
 import path from "path";
 
 import { router } from "./router.js";
-import { registerHelpers } from "./handlebars.js";
+import { initHandlebars } from "./handlebars.js";
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-registerHelpers();
+initHandlebars();
 
 app.set("view engine", "hbs");
 app.set("views", path.resolve());

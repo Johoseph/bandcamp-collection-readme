@@ -1,8 +1,11 @@
 import hbs from "hbs";
+import path from "path";
 
 const itemHeight = 60;
 
-export const registerHelpers = () => {
+export const initHandlebars = () => {
+  hbs.registerPartials(path.resolve() + "/partials");
+
   hbs.handlebars.registerHelper("offset", (index) => index * itemHeight);
   hbs.handlebars.registerHelper(
     "getHeight",
