@@ -12,6 +12,7 @@
     "watch": "nodemon index.js"
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "cors": "^2.8.5",
     "express": "^4.17.2",
     "hbs": "^4.2.0",

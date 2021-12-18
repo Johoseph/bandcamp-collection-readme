@@ -1,5 +1,6 @@
 import express from "express";
 import scrapeIt from "scrape-it";
+import axios from "axios";
 
 export const router = express.Router();
 
@@ -108,6 +109,13 @@ router.get("/getCollection", async (req, res) => {
       if (cur.length < parseInt(items, 10)) return [...cur, item];
       return cur;
     }, []);
+
+  for (let i = 0; i < data.items.length; i++) {
+    let image = await axios.get(data.items[i].albumArt, {
+      responseType: "arraybuffer",
+    });
+    data.items[i].albumArt = Buffer.from(image.data).toString("base64");
+  }
 
   res.setHeader("Content-type", "image/svg+xml");
 
