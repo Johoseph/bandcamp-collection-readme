@@ -12,4 +12,5 @@ export const registerHelpers = () => {
     if (str.length >= 45) return `${str.substr(0, 45)}...`;
     return str;
   });
+  hbs.handlebars.registerHelper("isDarkMode", (theme) => theme === "dark");
 };

@@ -2,8 +2,12 @@ body {
   margin: 1px 0 0 1px;
 }
 
+.bg {
+  fill: var(--background);
+}
+
 .text {
-  fill: #505958;
+  fill: var(--text-colour);
   font-family: Helvetica, sans-serif;
   dominant-baseline: text-before-edge;
 }
@@ -46,7 +50,7 @@ body {
 }
 
 .path {
-  stroke: #505958;
+  stroke: var(--text-colour);
   stroke-width: 30px;
 }
 
@@ -60,4 +64,8 @@ body {
 
 .icon:hover .bag {
   fill: lightblue;
+}
+
+.hr {
+  fill: var(--hr);
 }
