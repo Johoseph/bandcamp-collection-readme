@@ -8,4 +8,8 @@ export const registerHelpers = () => {
     "getHeight",
     (items) => items.length * itemHeight
   );
+  hbs.handlebars.registerHelper("truncate", (str) => {
+    if (str.length >= 45) return `${str.substr(0, 45)}...`;
+    return str;
+  });
 };

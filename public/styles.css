@@ -1,0 +1,63 @@
+body {
+  margin: 1px 0 0 1px;
+}
+
+.text {
+  fill: #505958;
+  font-family: Helvetica, sans-serif;
+  dominant-baseline: text-before-edge;
+}
+
+.link:hover,
+.link:focus-visible {
+  text-decoration: underline;
+}
+
+.artwork {
+  transform: translate(20px, 10px);
+}
+
+.title {
+  font-size: 14px;
+  font-weight: bold;
+  transform: translate(75px, 15px);
+}
+
+.artist {
+  font-size: 12px;
+  transform: translate(75px, 33px);
+}
+
+.fav-feat-title {
+  fill: #999;
+  font-size: 12px;
+  transform: translate(535px, 17px);
+  text-anchor: end;
+}
+
+.fav-feat-track {
+  font-size: 12px;
+  transform: translate(535px, 33px);
+  text-anchor: end;
+}
+
+.icon {
+  transform: translate(550px, 17px);
+}
+
+.path {
+  stroke: #505958;
+  stroke-width: 30px;
+}
+
+.icon svg {
+  transition: fill 300ms;
+}
+
+.icon:hover .heart {
+  fill: pink;
+}
+
+.icon:hover .bag {
+  fill: lightblue;
+}

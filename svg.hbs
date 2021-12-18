@@ -1,20 +1,12 @@
 <head>
-  <style>body { margin: 1px 0 0 1px; } .album { fill: #505958; font-family:
-    Helvetica, sans-serif; dominant-baseline: text-before-edge; } .album:hover,
-    .album:focus-visible { text-decoration: underline; } .artwork { transform:
-    translate(10px, 10px); } .title { font-size: 14px; font-weight: bold;
-    transform: translate(65px, 15px); } .artist { font-size: 12px; transform:
-    translate(65px, 33px); } .icon { transform: translate(460px, 15px); } .path
-    { stroke: #505958; stroke-width: 30px; }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="500"
+    width="600"
     height="{{getHeight data.items}}"
-    viewBox="0 0 500 {{getHeight data.items}}"
+    viewBox="0 0 600 {{getHeight data.items}}"
     fill="none"
   >
     <rect width="100%" height="100%" rx="5" fill="#ffffff"></rect>
@@ -25,21 +17,36 @@
     {{/unless}}
     <g id="history">
       {{#each data.items}}
-        <g style="transform:translate(0, {{offset @index}}px);">
+        <g class="item" style="transform:translate(0, {{offset @index}}px);">
           <image
             class="artwork"
             href="{{this.albumArt}}"
             height="40"
             width="40"
           />
-          <a class="album" href="{{this.albumLink}}" target="_blank">
-            <text class="title">{{this.title}}</text>
+          <a class="link text" href="{{this.albumLink}}" target="_blank">
+            <text class="title">{{truncate this.title}}</text>
             <text class="artist">{{this.artist}}</text>
           </a>
+          {{#if this.favFeatTrack}}
+            <g class="fav-feat">
+              <text class="fav-feat-title text">
+                {{#if this.isCollection}}favourite{{else}}featured{{/if}}
+                track
+              </text>
+              <a
+                class="link text"
+                href="{{this.favFeatTrackLink}}"
+                target="_blank"
+              >
+                <text class="fav-feat-track">{{this.favFeatTrack}}</text>
+              </a>
+            </g>
+          {{/if}}
           <g class="icon">
             {{#if this.isCollection}}
               <svg
-                class="icon"
+                class="heart"
                 fill="transparent"
                 viewBox="0 0 512 512"
                 height="30px"
@@ -52,8 +59,10 @@
                 >
                 </path>
               </svg>
+              <title>In collection</title>
             {{else}}
               <svg
+                class="bag"
                 fill="transparent"
                 viewBox="0 0 512 512"
                 height="30px"
@@ -68,9 +77,10 @@
                 >
                 </path>
               </svg>
+              <title>In wishlist</title>
             {{/if}}
           </g>
-          <rect x="10" width="490" y="60" height="1" fill="#ddd">
+          <rect x="10" width="580" y="60" height="1" fill="#ddd">
           </rect>
         </g>
       {{/each}}

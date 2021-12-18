@@ -14,6 +14,7 @@ registerHelpers();
 app.set("view engine", "hbs");
 app.set("views", path.resolve());
 
+app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.json());
