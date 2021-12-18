@@ -12,7 +12,7 @@ const port = process.env.PORT || 8080;
 initHandlebars();
 
 app.set("view engine", "hbs");
-app.set("views", path.resolve());
+app.set("views", path.resolve() + "/views");
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));

@@ -4,7 +4,7 @@ import path from "path";
 const itemHeight = 60;
 
 export const initHandlebars = () => {
-  hbs.registerPartials(path.resolve() + "/partials");
+  hbs.registerPartials(path.resolve() + "/views/partials");
 
   hbs.handlebars.registerHelper("offset", (index) => index * itemHeight);
   hbs.handlebars.registerHelper(
