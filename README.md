@@ -12,6 +12,10 @@ Add the below snippet to your GitHub's `README.md` page to retreive the most rec
 
 [![Johoseph's bandcamp collection](https://bandcamp-collection-readme.vercel.app/getCollection?username=Johoseph)](https://bandcamp-collection-readme.vercel.app/getCollection?username=Johoseph)
 
+### Usage Note
+
+This app has been deployed via [Vercel](https://github.com/vercel/vercel) under a 'hobby' account - this account tier allocates requests a maximum of 5 seconds to finish. Since your Bandcamp data has to be retrieved via a 'web-scrape' (Bandcamp does not have a public developer API), requests will occasionally take longer than 5 seconds and fail (resulting in a `504` error). Unfortunately there is not much that can be done about this without upgrading my Vercel account, so make sure you provide an image `alt` (and potentially even a hyperlink to the request) if you intend to use this service.
+
 ## Customisation
 
 The following request query parameters can be used to customise the bandcamp collection list that is retrieved, see the below sub-headings for further explanation:
