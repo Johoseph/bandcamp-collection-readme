@@ -67,7 +67,7 @@ router.get("/getCollection", async (req, res) => {
       theme,
       timeout: true,
     });
-  }, 1000);
+  }, 4000);
 
   let {
     username,
