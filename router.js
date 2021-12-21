@@ -54,6 +54,21 @@ const scrapeConfig = (isCollection) => ({
 });
 
 router.get("/getCollection", async (req, res) => {
+  let isTimeout = false;
+
+  res.setHeader("Content-type", "image/svg+xml");
+
+  // Catering for vercel 5 second timeout
+  // https://vercel.com/docs/concepts/limits/overview#serverless-function-execution-timeout
+  let timeout = setTimeout(() => {
+    isTimeout = true;
+
+    return res.render("svg", {
+      theme,
+      timeout: true,
+    });
+  }, 4900);
+
   let {
     username,
     include_wishlist,
@@ -117,10 +132,13 @@ router.get("/getCollection", async (req, res) => {
     data.items[i].albumArt = Buffer.from(image.data).toString("base64");
   }
 
-  res.setHeader("Content-type", "image/svg+xml");
+  if (!isTimeout) {
+    clearTimeout(timeout);
 
-  return res.render("svg", {
-    data,
-    theme,
-  });
+    return res.render("svg", {
+      data,
+      theme,
+      timeout: false,
+    });
+  }
 });

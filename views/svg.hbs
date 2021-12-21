@@ -31,44 +31,57 @@
     <rect class="hr" x="10" width="580" y="49" height="1">
     </rect>
   </g>
-  <g id="history">
-    {{#each data.items}}
-      <g class="item" style="transform:translate(0, {{offset @index}}px);">
-        <image
-          class="artwork"
-          href="data:image/png;base64, {{this.albumArt}}"
-          height="40"
-          width="40"
-        />
-        <a class="link text" href="{{this.albumLink}}" target="_blank">
-          <text class="title">{{truncate this.title}}</text>
-          <text class="artist">{{this.artist}}</text>
-        </a>
-        {{#if this.favFeatTrack}}
-          <g class="fav-feat">
-            <text class="fav-feat-title text">
-              {{#if this.isCollection}}favourite{{else}}featured{{/if}}
-              track
-            </text>
-            <a
-              class="link text"
-              href="{{this.favFeatTrackLink}}"
-              target="_blank"
-            >
-              <text class="fav-feat-track">{{this.favFeatTrack}}</text>
-            </a>
-          </g>
-        {{/if}}
-        <g class="icon">
-          {{#if this.isCollection}}
-            {{> heart }}
-          {{else}}
-            {{> bag }}
+  {{#if timeout}}
+    <g id="timeout">
+      <text class="text err-title">This request has </text>
+      <a
+        href="https://github.com/Johoseph/bandcamp-collection-readme#usage-note"
+        target="_blank"
+      >
+        <text class="text link err-link">timed out.</text>
+      </a>
+      <text class="text err-body">Please refresh the page to try again.</text>
+    </g>
+  {{else}}
+    <g id="history">
+      {{#each data.items}}
+        <g class="item" style="transform:translate(0, {{offset @index}}px);">
+          <image
+            class="artwork"
+            href="data:image/png;base64, {{this.albumArt}}"
+            height="40"
+            width="40"
+          />
+          <a class="link text" href="{{this.albumLink}}" target="_blank">
+            <text class="title">{{truncate this.title}}</text>
+            <text class="artist">{{this.artist}}</text>
+          </a>
+          {{#if this.favFeatTrack}}
+            <g class="fav-feat">
+              <text class="fav-feat-title text">
+                {{#if this.isCollection}}favourite{{else}}featured{{/if}}
+                track
+              </text>
+              <a
+                class="link text"
+                href="{{this.favFeatTrackLink}}"
+                target="_blank"
+              >
+                <text class="fav-feat-track">{{this.favFeatTrack}}</text>
+              </a>
+            </g>
           {{/if}}
+          <g class="icon">
+            {{#if this.isCollection}}
+              {{> heart }}
+            {{else}}
+              {{> bag }}
+            {{/if}}
+          </g>
+          <rect class="hr" x="10" width="580" y="60" height="1">
+          </rect>
         </g>
-        <rect class="hr" x="10" width="580" y="60" height="1">
-        </rect>
-      </g>
-    {{/each}}
-  </g>
+      {{/each}}
+    </g>
+  {{/if}}
 </svg>
