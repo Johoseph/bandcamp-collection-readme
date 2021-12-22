@@ -1,14 +1,17 @@
 import express from "express";
 import scrapeIt from "scrape-it";
 import axios from "axios";
+import { Cache } from "memory-cache";
 
 export const router = express.Router();
+
+const collectionCache = new Cache();
 
 const scrapeConfig = (isCollection) => ({
   profileName: {
     selector: "[data-bind='text: name']",
   },
-  profilePicture: {
+  /* profilePicture: {
     selector: ".popupImage > img",
     attr: "src",
   },
@@ -17,7 +20,7 @@ const scrapeConfig = (isCollection) => ({
   },
   wishlistCount: {
     selector: "[data-tab='wishlist'] .count",
-  },
+  }, */
   items: {
     listItem: ".collection-item-container",
     data: {
@@ -53,16 +56,68 @@ const scrapeConfig = (isCollection) => ({
   },
 });
 
+const scrapeData = async (username, includeWishlist = true) => {
+  let data;
+  let itemsArr = [];
+
+  await Promise.all([
+    scrapeIt(`https://bandcamp.com/${username}`, scrapeConfig(true)).then(
+      (scrape) => {
+        data = scrape.data;
+        itemsArr = [...itemsArr, ...scrape.data.items];
+      }
+    ),
+    ...(includeWishlist
+      ? [
+          scrapeIt(
+            `https://bandcamp.com/${username}/wishlist`,
+            scrapeConfig(false)
+          ).then((scrape) => (itemsArr = [...itemsArr, ...scrape.data.items])),
+        ]
+      : []),
+  ]);
+
+  data.items = itemsArr;
+
+  return data;
+};
+
+router.get("/cacheUser", async (req, res) => {
+  let { username } = req.query;
+
+  if (!username)
+    return res.status(400).json({
+      timestamp: new Date(),
+      status: 400,
+      error: "Bad Request",
+      message: "No Bandcamp 'username' param specified in request.",
+      path: `${req.headers.host}/getCollection`,
+      help: `${req.headers.host}/getCollection?username=Your-Bandcamp-Username`,
+    });
+
+  const data = await scrapeData(username);
+
+  const cacheKey = encodeURIComponent(username.toLowerCase());
+
+  // Cache for 1 day
+  collectionCache.put(cacheKey, data, 86400000);
+
+  return res.status(200).json({
+    timestamp: new Date(),
+    status: 200,
+    message: `Cache for '${data.profileName}' updated successfully.`,
+  });
+});
+
 router.get("/getCollection", async (req, res) => {
   let isTimeout = false;
-
-  res.setHeader("Content-type", "image/svg+xml");
 
   // Catering for vercel 5 second timeout
   // https://vercel.com/docs/concepts/limits/overview#serverless-function-execution-timeout
   let timeout = setTimeout(() => {
     isTimeout = true;
 
+    res.setHeader("Content-type", "image/svg+xml");
     return res.render("svg", {
       theme,
       timeout: true,
@@ -77,38 +132,39 @@ router.get("/getCollection", async (req, res) => {
     theme,
   } = req.query;
 
-  let data;
-  let itemsArr = [];
-
   if (!username)
-    return res.status(400).send("No Bandcamp user specified in request.");
+    return res.status(400).json({
+      timestamp: new Date(),
+      status: 400,
+      error: "Bad Request",
+      message: "No Bandcamp 'username' param specified in request.",
+      path: `${req.headers.host}/getCollection`,
+      help: `${req.headers.host}/getCollection?username=Your-Bandcamp-Username`,
+    });
 
   if (isNaN(items))
-    return res.status(400).send("Items specified must be a number.");
+    return res.status(400).json({
+      timestamp: new Date(),
+      status: 400,
+      error: "Bad Request",
+      message: "Items specified must be a number.",
+      path: `${req.headers.host}/getCollection`,
+      help: `${req.headers.host}/getCollection?username=${username}&items=10`,
+    });
 
   // Default options
   include_wishlist = include_wishlist !== "false";
   one_collection_item = one_collection_item !== "false";
   theme = theme === "dark" ? "dark" : "light";
 
-  await Promise.all([
-    scrapeIt(`https://bandcamp.com/${username}`, scrapeConfig(true)).then(
-      (scrape) => {
-        data = scrape.data;
-        itemsArr = [...itemsArr, ...scrape.data.items];
-      }
-    ),
-    ...(include_wishlist
-      ? [
-          scrapeIt(
-            `https://bandcamp.com/${username}/wishlist`,
-            scrapeConfig(false)
-          ).then((scrape) => (itemsArr = [...itemsArr, ...scrape.data.items])),
-        ]
-      : []),
-  ]);
+  const cacheKey = encodeURIComponent(username.toLowerCase());
 
-  data.items = itemsArr
+  let data = collectionCache.get(cacheKey);
+
+  if (!data) data = await scrapeData(username, include_wishlist);
+  else data = JSON.parse(JSON.stringify(data));
+
+  data.items = data.items
     .sort((a, b) =>
       parseInt(a.dateAdded, 10) < parseInt(b.dateAdded, 10) ? 1 : -1
     )
@@ -135,6 +191,7 @@ router.get("/getCollection", async (req, res) => {
   if (!isTimeout) {
     clearTimeout(timeout);
 
+    res.setHeader("Content-type", "image/svg+xml");
     return res.render("svg", {
       data,
       theme,
