@@ -19,7 +19,7 @@ The above usage will work on its own, but it is recommended that you additionall
 1. Create a `bandcamp-collection.yml` file within the `.github/workflows` directory of the desired repository.
 2. Add the following contents, make sure to replace **Johoseph** with your bandcamp username.
 
-```
+```yml
 name: Cache Bandcamp data
 on:
   schedule:
