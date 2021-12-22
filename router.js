@@ -2,6 +2,7 @@ import express from "express";
 import scrapeIt from "scrape-it";
 import axios from "axios";
 import { Cache } from "memory-cache";
+import { log } from "npmlog";
 
 export const router = express.Router();
 
@@ -57,6 +58,8 @@ const scrapeConfig = (isCollection) => ({
 });
 
 const scrapeData = async (username, includeWishlist = true) => {
+  log.info("Is scraping");
+
   let data;
   let itemsArr = [];
 
