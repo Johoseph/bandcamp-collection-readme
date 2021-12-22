@@ -174,9 +174,13 @@ router.get("/getCollection", async (req, res) => {
     data.items[i].albumArt = Buffer.from(image.data).toString("base64");
   }
 
-  return res.setHeader("Content-type", "image/svg+xml").render("svg", {
-    data,
-    theme,
-    timeout: false,
-  });
+  return res
+    .setHeader("Content-type", "image/svg+xml")
+    .setHeader("Cache-Control", "no-cache")
+    .setHeader("Expires", new Date(Date.now() + 60).toUTCString())
+    .render("svg", {
+      data,
+      theme,
+      timeout: false,
+    });
 });
