@@ -24,6 +24,9 @@
     "nodemon": "^2.0.15"
   },
   "nodemonConfig": {
-    "ext": "js,json,hbs,css"
+    "ext": "js,json,hbs,css",
+    "ignore": [
+      "cache.json"
+    ]
   }
 }

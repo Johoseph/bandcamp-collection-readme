@@ -1,12 +1,11 @@
 import express from "express";
 import scrapeIt from "scrape-it";
 import axios from "axios";
-import { Cache } from "memory-cache";
 import log from "npmlog";
+import fs from "fs";
+import path from "path";
 
 export const router = express.Router();
-
-const collectionCache = new Cache();
 
 const scrapeConfig = (isCollection) => ({
   profileName: {
@@ -102,8 +101,29 @@ router.get("/cacheUser", async (req, res) => {
 
   const cacheKey = encodeURIComponent(username.toLowerCase());
 
-  // Cache for 1 day
-  collectionCache.put(cacheKey, data, 86400000);
+  let currentCache;
+
+  try {
+    currentCache = await fs.promises.readFile(
+      path.resolve() + "/cache.json",
+      "utf-8",
+      () => {}
+    );
+    currentCache = JSON.parse(currentCache);
+  } catch {
+    currentCache = {};
+  }
+
+  currentCache[cacheKey] = data;
+
+  log.info(Object.keys(currentCache));
+
+  await fs.promises.writeFile(
+    path.resolve() + "/cache.json",
+    JSON.stringify(currentCache),
+    "utf-8",
+    () => {}
+  );
 
   return res.status(200).json({
     timestamp: new Date(),
@@ -113,12 +133,6 @@ router.get("/cacheUser", async (req, res) => {
 });
 
 router.get("/getCollection", async (req, res) => {
-  log.info(
-    collectionCache.keys().length > 0
-      ? `Cached users: ${collectionCache.keys().join(", ")}`
-      : "No cached users"
-  );
-
   let isTimeout = false;
 
   // Catering for vercel 5 second timeout
@@ -168,10 +182,14 @@ router.get("/getCollection", async (req, res) => {
 
   const cacheKey = encodeURIComponent(username.toLowerCase());
 
-  let data = collectionCache.get(cacheKey);
+  let data;
 
-  if (!data) data = await scrapeData(username, include_wishlist);
-  else data = JSON.parse(JSON.stringify(data));
+  try {
+    data = await fs.promises.readFile(path.resolve() + "/cache.json");
+    data = JSON.parse(data)[cacheKey];
+  } catch {
+    data = await scrapeData(username, include_wishlist);
+  }
 
   data.items = data.items
     .sort((a, b) =>
