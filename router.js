@@ -2,7 +2,7 @@ import express from "express";
 import scrapeIt from "scrape-it";
 import axios from "axios";
 import { Cache } from "memory-cache";
-import { log } from "npmlog";
+import log from "npmlog";
 
 export const router = express.Router();
 
