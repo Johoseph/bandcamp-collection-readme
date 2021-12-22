@@ -1,8 +1,6 @@
 import express from "express";
 import scrapeIt from "scrape-it";
 import axios from "axios";
-import { performance } from "perf_hooks";
-import log from "npmlog";
 
 export const router = express.Router();
 
@@ -56,10 +54,6 @@ const scrapeConfig = (isCollection) => ({
 });
 
 router.get("/getCollection", async (req, res) => {
-  const start = performance.now();
-  const exeId = Math.round(Math.random() * 10000);
-  log.info(`Execution start: ${start} (${exeId})`);
-
   let isTimeout = false;
 
   res.setHeader("Content-type", "image/svg+xml");
@@ -68,14 +62,12 @@ router.get("/getCollection", async (req, res) => {
   // https://vercel.com/docs/concepts/limits/overview#serverless-function-execution-timeout
   let timeout = setTimeout(() => {
     isTimeout = true;
-    log.info(`Execution failed: ${performance.now()} (${exeId})`);
-    log.info(`Execution duration: ${performance.now() - start} (${exeId})`);
 
     return res.render("svg", {
       theme,
       timeout: true,
     });
-  }, 3500);
+  }, 4800);
 
   let {
     username,
@@ -98,8 +90,6 @@ router.get("/getCollection", async (req, res) => {
   include_wishlist = include_wishlist !== "false";
   one_collection_item = one_collection_item !== "false";
   theme = theme === "dark" ? "dark" : "light";
-
-  log.info(`Execution pre-scrape: ${performance.now()} (${exeId})`);
 
   await Promise.all([
     scrapeIt(`https://bandcamp.com/${username}`, scrapeConfig(true)).then(
@@ -144,8 +134,6 @@ router.get("/getCollection", async (req, res) => {
 
   if (!isTimeout) {
     clearTimeout(timeout);
-    log.info(`Execution done: ${performance.now()} (${exeId})`);
-    log.info(`Execution duration: ${performance.now() - start} (${exeId})`);
 
     return res.render("svg", {
       data,
