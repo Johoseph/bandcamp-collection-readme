@@ -151,6 +151,7 @@ router.get("/getCollection", async (req, res) => {
   else data = JSON.parse(JSON.stringify(data));
 
   data.items = data.items
+    .filter((item) => (include_wishlist ? true : item.isCollection))
     .sort((a, b) =>
       parseInt(a.dateAdded, 10) < parseInt(b.dateAdded, 10) ? 1 : -1
     )
