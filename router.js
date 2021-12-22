@@ -2,7 +2,6 @@ import express from "express";
 import scrapeIt from "scrape-it";
 import axios from "axios";
 import { Cache } from "memory-cache";
-import log from "npmlog";
 
 export const router = express.Router();
 
@@ -58,8 +57,6 @@ const scrapeConfig = (isCollection) => ({
 });
 
 const scrapeData = async (username, includeWishlist = true) => {
-  log.info("Is scraping");
-
   let data;
   let itemsArr = [];
 
@@ -113,26 +110,6 @@ router.get("/cacheUser", async (req, res) => {
 });
 
 router.get("/getCollection", async (req, res) => {
-  log.info(
-    collectionCache.keys().length > 0
-      ? `Cached users: ${collectionCache.keys().join(", ")}`
-      : "No cached users"
-  );
-
-  let isTimeout = false;
-
-  // Catering for vercel 5 second timeout
-  // https://vercel.com/docs/concepts/limits/overview#serverless-function-execution-timeout
-  let timeout = setTimeout(() => {
-    isTimeout = true;
-
-    res.setHeader("Content-type", "image/svg+xml");
-    return res.render("svg", {
-      theme,
-      timeout: true,
-    });
-  }, 4800);
-
   let {
     username,
     include_wishlist,
@@ -197,14 +174,9 @@ router.get("/getCollection", async (req, res) => {
     data.items[i].albumArt = Buffer.from(image.data).toString("base64");
   }
 
-  if (!isTimeout) {
-    clearTimeout(timeout);
-
-    res.setHeader("Content-type", "image/svg+xml");
-    return res.render("svg", {
-      data,
-      theme,
-      timeout: false,
-    });
-  }
+  return res.setHeader("Content-type", "image/svg+xml").render("svg", {
+    data,
+    theme,
+    timeout: false,
+  });
 });
