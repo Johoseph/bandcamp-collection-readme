@@ -113,6 +113,12 @@ router.get("/cacheUser", async (req, res) => {
 });
 
 router.get("/getCollection", async (req, res) => {
+  log.info(
+    collectionCache.keys().length > 0
+      ? `Cached users: ${collectionCache.keys().join(", ")}`
+      : "No cached users"
+  );
+
   let isTimeout = false;
 
   // Catering for vercel 5 second timeout
