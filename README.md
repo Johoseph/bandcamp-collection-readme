@@ -12,11 +12,35 @@ Add the below snippet to your GitHub's `README.md` page to retreive the most rec
 
 [![Johoseph's bandcamp collection](https://bandcamp-collection-readme.vercel.app/getCollection?username=Johoseph)](https://bandcamp-collection-readme.vercel.app/getCollection?username=Johoseph)
 
-### Usage Note
+### Add a workflow to cache your collection
 
-This app has been deployed via [Vercel](https://github.com/vercel/vercel) under a 'hobby' account - this account tier allocates requests a maximum of 5 seconds to finish. Since your Bandcamp data has to be retrieved via a web-scrape (Bandcamp does not have a public developer API), requests will occasionally take longer than 5 seconds and fail (resulting in the below error). Unfortunately there is not much that can be done about this without upgrading my Vercel account, so make sure you are aware if you intend to use this service.
+The above usage will work on its own, but it is recommended that you additionally add a Github workflow action that intermittently caches your Bandcamp data (see [Why a workflow?](https://github.com/Johoseph/bandcamp-collection-readme#why-a-workflow) for further explanation).
 
-<img style="border-radius:5px;" src="https://user-images.githubusercontent.com/49534136/146941298-de1cac2d-ba12-4541-aee7-ec0549f4159c.png" alt="Timeout example" />
+1. Create a `bandcamp-collection.yml` file within the `.github/workflows` directory of the desired repository.
+2. Add the following contents, make sure to replace **Johoseph** with your bandcamp username.
+
+```
+name: Cache Bandcamp data
+on:
+  schedule:
+    # Runs every hour
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  cache-bandcamp-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send cache request
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: "https://bandcamp-collection-readme.vercel.app/cacheUser?username=Johoseph"
+          method: "GET"
+```
+
+### Why a workflow?
+
+Bandcamp does not have a public developer API, so to enable this app your Bandcamp data has to be retrieved via a web-scrape. A usual scrape request can take anywhere from **2** to **5** seconds - this creates a problem for [Github's anonymised URL engine Camo](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-anonymized-urls), which has a maximum request time of **4** seconds. What this means is that longer scrape requests will occassional timeout, resulting in a `504` error from Camo and no image returned. The addition of a workflow allows for Bandcamp data to be pre-gathered and cached, so that when a `getCollection` request is fired, the collection svg can be generated and returned to the client much faster.
 
 ## Customisation
 
