@@ -36,6 +36,7 @@ jobs:
         with:
           url: "https://bandcamp-collection-readme.herokuapp.com/cacheUser?username=Johoseph"
           method: "GET"
+          timeout: 10000
 ```
 
 ### Why a workflow?
