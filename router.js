@@ -1,6 +1,7 @@
 import express from "express";
 import scrapeIt from "scrape-it";
 import axios from "axios";
+import log from "npmlog";
 import { Cache } from "memory-cache";
 
 export const router = express.Router();
@@ -99,8 +100,10 @@ router.get("/cacheUser", async (req, res) => {
 
   const cacheKey = encodeURIComponent(username.toLowerCase());
 
-  // Cache for 1 day
-  collectionCache.put(cacheKey, data, 86400000);
+  // Cache for 6 hours
+  collectionCache.put(cacheKey, data, 21600000);
+
+  log.info(`Current key list: ${collectionCache.keys().join(", ")}`);
 
   return res.status(200).json({
     timestamp: new Date(),
