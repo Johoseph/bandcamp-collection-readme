@@ -1,7 +1,6 @@
 import express from "express";
 import scrapeIt from "scrape-it";
 import axios from "axios";
-import log from "npmlog";
 
 export const router = express.Router();
 
