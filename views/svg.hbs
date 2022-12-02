@@ -33,14 +33,15 @@
   </g>
   {{#if timeout}}
     <g id="timeout">
-      <text class="text err-title">This request has </text>
-      <a
-        href="https://github.com/Johoseph/bandcamp-collection-readme#usage-note"
-        target="_blank"
-      >
-        <text class="text link err-link">timed out.</text>
-      </a>
-      <text class="text err-body">Please refresh the page to try again.</text>
+      <text class="text err-title">This request has timed out.</text>
+      <text class="text err-body">Please refresh the page to try again or
+        <a
+          href="https://bandcamp.com/{{username}}"
+          target="_blank"
+          class="link err-link"
+        >
+          click here</a>
+        to view directly.</text>
     </g>
   {{else}}
     <g id="history">

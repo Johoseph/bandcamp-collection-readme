@@ -1,12 +1,10 @@
 import express from "express";
 import scrapeIt from "scrape-it";
 import axios from "axios";
-import log from "npmlog";
-import { Cache } from "memory-cache";
 
 export const router = express.Router();
 
-const collectionCache = new Cache();
+const REQUEST_TIMEOUT = 3000;
 
 const scrapeConfig = (isCollection) => ({
   profileName: {
@@ -83,34 +81,13 @@ const scrapeData = async (username, includeWishlist = true) => {
   return data;
 };
 
-router.get("/cacheUser", async (req, res) => {
-  let { username } = req.query;
-
-  if (!username)
-    return res.status(400).json({
-      timestamp: new Date(),
-      status: 400,
-      error: "Bad Request",
-      message: "No Bandcamp 'username' param specified in request.",
-      path: `${req.headers.host}/getCollection`,
-      help: `${req.headers.host}/getCollection?username=Your-Bandcamp-Username`,
-    });
-
-  const data = await scrapeData(username);
-
-  const cacheKey = encodeURIComponent(username.toLowerCase());
-
-  // Cache for 6 hours
-  collectionCache.put(cacheKey, data, 21600000);
-
-  log.info(`Current key list: ${collectionCache.keys().join(", ")}`);
-
-  return res.status(200).json({
-    timestamp: new Date(),
-    status: 200,
-    message: `Cache for '${data.profileName}' updated successfully.`,
-  });
-});
+const getAlbumArt = async (artURL) => {
+  return axios
+    .get(artURL, {
+      responseType: "arraybuffer",
+    })
+    .then((image) => Buffer.from(image.data).toString("base64"));
+};
 
 router.get("/getCollection", async (req, res) => {
   let {
@@ -141,50 +118,56 @@ router.get("/getCollection", async (req, res) => {
       help: `${req.headers.host}/getCollection?username=${username}&items=10`,
     });
 
-  // Default options
-  include_wishlist = include_wishlist !== "false";
-  one_collection_item = one_collection_item !== "false";
-  theme = theme === "dark" ? "dark" : "light";
+  Promise.race([
+    new Promise((resolve) => {
+      setTimeout(() => resolve(), REQUEST_TIMEOUT);
+    }),
+    new Promise(async (resolve) => {
+      // Default options
+      include_wishlist = include_wishlist !== "false";
+      one_collection_item = one_collection_item !== "false";
+      theme = theme === "dark" ? "dark" : "light";
 
-  const cacheKey = encodeURIComponent(username.toLowerCase());
+      const data = await scrapeData(username, include_wishlist);
 
-  let data = collectionCache.get(cacheKey);
+      data.items = data.items
+        .filter((item) => (include_wishlist ? true : item.isCollection))
+        .sort((a, b) =>
+          parseInt(a.dateAdded, 10) < parseInt(b.dateAdded, 10) ? 1 : -1
+        )
+        .reduce((cur, item) => {
+          if (
+            one_collection_item &&
+            !cur.some((ci) => ci.isCollection) &&
+            cur.length === parseInt(items, 10) - 1 &&
+            !item.isCollection
+          )
+            return cur;
 
-  if (!data) data = await scrapeData(username, include_wishlist);
-  else data = JSON.parse(JSON.stringify(data));
+          if (cur.length < parseInt(items, 10)) return [...cur, item];
+          return cur;
+        }, []);
 
-  data.items = data.items
-    .filter((item) => (include_wishlist ? true : item.isCollection))
-    .sort((a, b) =>
-      parseInt(a.dateAdded, 10) < parseInt(b.dateAdded, 10) ? 1 : -1
-    )
-    .reduce((cur, item) => {
-      if (
-        one_collection_item &&
-        !cur.some((ci) => ci.isCollection) &&
-        cur.length === parseInt(items, 10) - 1 &&
-        !item.isCollection
-      )
-        return cur;
+      Promise.all(
+        [...Array(data.items.length)].map((_, i) =>
+          getAlbumArt(data.items[i].albumArt)
+        )
+      ).then((art) => {
+        data.items.forEach((item, i) => (item.albumArt = art[i]));
 
-      if (cur.length < parseInt(items, 10)) return [...cur, item];
-      return cur;
-    }, []);
-
-  for (let i = 0; i < data.items.length; i++) {
-    let image = await axios.get(data.items[i].albumArt, {
-      responseType: "arraybuffer",
-    });
-    data.items[i].albumArt = Buffer.from(image.data).toString("base64");
-  }
-
-  return res
-    .setHeader("Content-type", "image/svg+xml")
-    .setHeader("Cache-Control", "no-cache")
-    .setHeader("Expires", new Date(Date.now() + 60).toUTCString())
-    .render("svg", {
-      data,
-      theme,
-      timeout: false,
-    });
+        resolve(data);
+      });
+    }),
+  ]).then((data) => {
+    return res
+      .setHeader("Content-type", "image/svg+xml")
+      .setHeader("Cache-Control", "no-cache")
+      .setHeader("Expires", new Date(Date.now() + 60).toUTCString())
+      .render("svg", {
+        data,
+        theme,
+        username,
+        timeout: !data,
+      });
+  });
 });
