@@ -20,7 +20,7 @@ app.use(express.json());
 
 app.use("/", router);
 
-app.all("/*splat", function (_, res) {
+app.all("*splat", function (_, res) {
   res
     .status(301)
     .redirect("https://github.com/Johoseph/bandcamp-collection-github");
