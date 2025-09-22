@@ -78,28 +78,52 @@ const scrapeConfig = (page: "collection" | "wishlist") => ({
   },
 });
 
+const withRetry = async (
+  scrape: () => Promise<scrapeIt.ScrapeResult<BandcampScrape>>,
+  attempt = 1
+) => {
+  if (attempt > 3)
+    return {
+      profileName: "",
+      items: [],
+    };
+
+  try {
+    const scrapeResult = await scrape();
+
+    return scrapeResult.data;
+  } catch (err) {
+    log.warn("", `Scrape attempt ${attempt} failed, retrying...`);
+    return await withRetry(scrape, attempt + 1);
+  }
+};
+
 const scrapeData = async (
   username: string,
   includeWishlist = true
 ): Promise<BandcampScrape> => {
   const scrapePromises = [
-    scrapeIt<BandcampScrape>(
-      {
-        url: `https://bandcamp.com/${username}`,
-        headers: SCRAPE_HEADERS,
-      },
-      scrapeConfig("collection")
+    withRetry(() =>
+      scrapeIt<BandcampScrape>(
+        {
+          url: `https://bandcamp.com/${username}`,
+          headers: SCRAPE_HEADERS,
+        },
+        scrapeConfig("collection")
+      )
     ),
   ];
 
   if (includeWishlist)
     scrapePromises.push(
-      scrapeIt<BandcampScrape>(
-        {
-          url: `https://bandcamp.com/${username}/wishlist`,
-          headers: SCRAPE_HEADERS,
-        },
-        scrapeConfig("wishlist")
+      withRetry(() =>
+        scrapeIt<BandcampScrape>(
+          {
+            url: `https://bandcamp.com/${username}/wishlist`,
+            headers: SCRAPE_HEADERS,
+          },
+          scrapeConfig("wishlist")
+        )
       )
     );
 
@@ -113,11 +137,8 @@ const scrapeData = async (
     };
 
   return {
-    profileName: collectionData.data.profileName,
-    items: [
-      ...collectionData.data.items,
-      ...(maybeWishListData?.data?.items ?? []),
-    ],
+    profileName: collectionData.profileName,
+    items: [...collectionData.items, ...(maybeWishListData?.items ?? [])],
   };
 };
 
