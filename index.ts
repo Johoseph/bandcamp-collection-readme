@@ -3,8 +3,8 @@ import cors from "cors";
 import log from "npmlog";
 import path from "path";
 
-import { router } from "./router.js";
-import { initHandlebars } from "./handlebars.js";
+import { router } from "./router.ts";
+import { initHandlebars } from "./handlebars.ts";
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -20,12 +20,16 @@ app.use(express.json());
 
 app.use("/", router);
 
-app.all("*", function (req, res) {
+// TODO: How does redirect work in express 5?
+/* app.all("/:path*", function (req, res) {
   res
     .status(301)
     .redirect("https://github.com/Johoseph/bandcamp-collection-github");
-});
+}); */
 
 app.listen(port, () => {
-  log.info(`Bandcamp collection scraper started at http://localhost:${port}`);
+  log.info(
+    "",
+    `Bandcamp collection scraper started at http://localhost:${port}`
+  );
 });
