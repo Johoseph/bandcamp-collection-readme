@@ -7,9 +7,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "node dist/index.js",
     "build": "tsc",
-    "build:old": "tsc && copyfiles views/**/*.hbs dist",
     "dev": "tsx watch index.ts"
   },
   "dependencies": {
