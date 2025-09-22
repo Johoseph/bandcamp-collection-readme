@@ -3,8 +3,8 @@ import cors from "cors";
 import log from "npmlog";
 import path from "path";
 
-import { router } from "./router.ts";
-import { initHandlebars } from "./handlebars.ts";
+import { router } from "./router.js";
+import { initHandlebars } from "./handlebars.js";
 
 const app = express();
 const port = process.env.PORT || 8080;
