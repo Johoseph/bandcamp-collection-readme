@@ -3,8 +3,8 @@ import cors from "cors";
 import log from "npmlog";
 import path from "path";
 
-import { router } from "./router.ts";
-import { initHandlebars } from "./handlebars.ts";
+import { router } from "./router.js";
+import { initHandlebars } from "./handlebars.js";
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -12,7 +12,7 @@ const port = process.env.PORT || 8080;
 initHandlebars();
 
 app.set("view engine", "hbs");
-app.set("views", path.resolve() + "/views");
+app.set("views", path.resolve() + "/public");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -32,3 +32,5 @@ app.listen(port, () => {
     `Bandcamp collection scraper started at http://localhost:${port}`
   );
 });
+
+export default app;
