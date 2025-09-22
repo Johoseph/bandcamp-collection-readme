@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    /* Modern JavaScript & Browser Compatibility: */
+    "target": "ESNext",
+
+    /* Module System Settings: */
+    "module": "NodeNext",
+    "outDir": "dist", // Specifies the output directory for compiled files
+    "sourceMap": true,
+
+    /* Module Resolution Strategy: */
+    "moduleResolution": "NodeNext",
+    "moduleDetection": "force",
+
+    /* Interoperability and File Consistency: */
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Strict Type-Checking: */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noImplicitAny": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+
+    "lib": ["ES2022"]
+  },
+  "exclude": ["node_modules", "dist"] // Excludes `node_modules` and `dist` directories from the project
+}

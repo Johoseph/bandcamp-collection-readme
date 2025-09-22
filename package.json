@@ -1,28 +1,30 @@
 {
   "name": "bandcamp-collection-readme",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A bandcamp collection scraper that generates a history panel for your readme 🎸",
-  "main": "index.js",
+  "main": "index.ts",
   "author": "Joseph Moroney",
   "type": "module",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "node index.js",
-    "watch": "nodemon index.js"
+    "start": "node --experimental-strip-types index.ts",
+    "dev": "node --watch --experimental-strip-types index.ts"
   },
   "dependencies": {
-    "axios": "^0.24.0",
+    "axios": "^1.12.1",
     "cors": "^2.8.5",
-    "express": "^4.17.2",
+    "express": "^5.1.0",
     "hbs": "^4.2.0",
-    "npmlog": "^6.0.0",
-    "scrape-it": "^5.3.2"
+    "npmlog": "^7.0.1",
+    "scrape-it": "6.1.11"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/hbs": "^4.0.5",
+    "@types/npmlog": "^7.0.0",
+    "typescript": "^5.9.2"
   },
-  "nodemonConfig": {
-    "ext": "js,json,hbs,css"
-  }
+  "packageManager": "yarn@4.9.4"
 }
