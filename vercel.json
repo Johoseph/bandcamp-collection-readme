@@ -3,7 +3,7 @@
   "buildCommand": "yarn build",
   "outputDirectory": "dist",
   "functions": {
-    "dist/index.js": { "runtime": "@vercel/node" }
+    "dist/index.js@2.0.0": { "runtime": "@vercel/node" }
   },
   "routes": [
     {
