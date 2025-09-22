@@ -24,5 +24,6 @@
   },
   "nodemonConfig": {
     "ext": "js,json,hbs,css"
-  }
+  },
+  "packageManager": "yarn@4.9.4"
 }
