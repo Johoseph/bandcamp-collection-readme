@@ -2,4 +2,4 @@
 /dist
 
 .yarn/*
-!~.yarn/releases
+!.yarn/releases
