@@ -22,14 +22,13 @@ type BandcampScrape = {
 export const router = express.Router();
 
 const REQUEST_TIMEOUT = 3000;
-
 const SCRAPE_HEADERS = {
   "User-Agent":
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
   Connection: "close",
 };
 
-const scrapeConfig = (page: "collection" | "wishlist") => ({
+const getScrapeOptions = (page: "collection" | "wishlist") => ({
   profileName: {
     selector: "[data-bind='text: name']",
   },
@@ -78,7 +77,7 @@ const scrapeConfig = (page: "collection" | "wishlist") => ({
   },
 });
 
-const withRetry = async (
+const attemptScrapeWithRetry = async (
   scrape: () => Promise<scrapeIt.ScrapeResult<BandcampScrape>>,
   attempt = 1
 ) => {
@@ -94,35 +93,35 @@ const withRetry = async (
     return scrapeResult.data;
   } catch (err) {
     log.warn("", `Scrape attempt ${attempt} failed, retrying...`);
-    return await withRetry(scrape, attempt + 1);
+    return await attemptScrapeWithRetry(scrape, attempt + 1);
   }
 };
 
-const scrapeData = async (
+const scrapeBandcamp = async (
   username: string,
   includeWishlist = true
 ): Promise<BandcampScrape> => {
   const scrapePromises = [
-    withRetry(() =>
+    attemptScrapeWithRetry(() =>
       scrapeIt<BandcampScrape>(
         {
           url: `https://bandcamp.com/${username}`,
           headers: SCRAPE_HEADERS,
         },
-        scrapeConfig("collection")
+        getScrapeOptions("collection")
       )
     ),
   ];
 
   if (includeWishlist)
     scrapePromises.push(
-      withRetry(() =>
+      attemptScrapeWithRetry(() =>
         scrapeIt<BandcampScrape>(
           {
             url: `https://bandcamp.com/${username}/wishlist`,
             headers: SCRAPE_HEADERS,
           },
-          scrapeConfig("wishlist")
+          getScrapeOptions("wishlist")
         )
       )
     );
@@ -162,8 +161,6 @@ router.get("/collection", async (req, res) => {
   if (!username || typeof username !== "string")
     return res.status(400).json({
       timestamp: new Date(),
-      status: 400,
-      error: "Bad Request",
       message: "No Bandcamp 'username' param specified in request.",
       path: `${req.headers.host}/collection`,
       help: `${req.headers.host}/collection?username=Your-Bandcamp-Username`,
@@ -172,8 +169,6 @@ router.get("/collection", async (req, res) => {
   if (typeof items !== "string" || isNaN(parseInt(items)))
     return res.status(400).json({
       timestamp: new Date(),
-      status: 400,
-      error: "Bad Request",
       message: "Items specified must be a number.",
       path: `${req.headers.host}/collection`,
       help: `${req.headers.host}/collection?username=${username}&items=10`,
@@ -189,7 +184,7 @@ router.get("/collection", async (req, res) => {
       const oneCollectionItem = one_collection_item !== "false";
       theme = theme === "dark" ? "dark" : "light";
 
-      const data = await scrapeData(username, includeWishlist);
+      const data = await scrapeBandcamp(username, includeWishlist);
 
       data.items = data.items
         .filter((item) => (includeWishlist ? true : item.isCollection))
@@ -199,8 +194,6 @@ router.get("/collection", async (req, res) => {
         .reduce((cur: BandcampItem[], item) => {
           if (
             oneCollectionItem &&
-            // @ts-ignore
-
             !cur.some((ci) => ci.isCollection) &&
             cur.length === parseInt(items, 10) - 1 &&
             !item.isCollection
